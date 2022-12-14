@@ -1,5 +1,5 @@
 ---
-apiVersion: kurl.sh/v1beta1
+apiVersion: cluster.kurl.sh/v1beta1
 kind: Installer
 metadata:
   name: 'myapp'
@@ -7,29 +7,20 @@ spec:
   kubernetes:
     version: 1.25.x
   containerd:
-    version: latest
+    version: 1.6.x
   weave:
-    version: latest
+    version: 2.6.x
   registry:
-    version: latest
+    version: 2.8.x
   prometheus:
-    version: latest
+    version: 0.60.x
   kotsadm:
-    version: latest
+    version: 1.91.x
   ekco:
     version: latest
   minio:
-    version: latest
-
-  # OpenEBS is the default PV provisioner, and
-  # will work for single node clusters, or for
-  # applications that handle data replication
-  # between nodes themselves (MongoDB, Cassandra,
-  # etc). If your requirements are different than
-  # this, see
-  # https://kurl.sh/docs/create-installer/choosing-a-pv-provisioner
-  #
+    version: 2022-10-20T00-55-09Z
   openebs:
-    version: latest
+    version: 3.3.x
     isLocalPVEnabled: true
     localPVStorageClassName: default
