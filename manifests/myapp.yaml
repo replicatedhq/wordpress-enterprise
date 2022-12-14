@@ -1,0 +1,11 @@
+apiVersion: kots.io/v1beta1
+kind: HelmChart
+metadata:
+  name: wordpress-enterprise
+spec:
+  chart:
+    name: APP
+    chartVersion: VERSION
+  helmVersion: v3
+  useHelmInstall: true
+  values: {}
