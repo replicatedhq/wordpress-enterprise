@@ -14,9 +14,9 @@ data:
       </head>
       <body>
         This is an example KOTS application.
-        <p>This is text from a user config value: '{{repl ConfigOption "example_default_value"}}' </p>
+        <p>This is text from a user config value: '{{ .Values.config.exampleDefaultValue }}' </p>
         </br>
-        This is a hidden value: '{{repl ConfigOption "hidden_text"}}'
+        This is a hidden value: '{{ .Values.config.hiddenValue }}'
       </body>
     </html>
   styles.css: |

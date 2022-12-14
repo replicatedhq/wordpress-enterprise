@@ -4,8 +4,12 @@ metadata:
   name: wordpress-enterprise
 spec:
   chart:
-    name: APP
-    chartVersion: VERSION
+    name: wordpress-enterprise
+    chartVersion: 0.1.0
   helmVersion: v3
   useHelmInstall: true
-  values: {}
+  values:
+    isKurl: repl{{ IsKurl }}
+    config: 
+      exampleDefaultValue: repl{{ ConfigOption "example_default_value" }}
+      hiddenValue: repl{{ ConfigOption "hidden_text" }}

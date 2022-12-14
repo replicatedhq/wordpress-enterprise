@@ -19,23 +19,26 @@ jobs:
     - name: Get branch name
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: get_branch
+    - name: Helm Package / deps
+      run: "helm dependency update && helm package . -d manifests"
     - name: Create a release on Channel associated with the branch
       uses: docker://replicated/vendor-cli:latest
       with:
         args: release create --auto -y
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
-        REPLICATED_APP: ${{ secrets.REPLICATED_APP }}
+        REPLICATED_APP: wordpress-enterprise
         GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
         GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
-
-    - name: Release Kubernetes Installer
+    - name: (staging) Create a release on Channel associated with the branch
       uses: docker://replicated/vendor-cli:latest
       with:
-        args: installer create --auto -y
+        args: release create --auto -y
       env:
-        REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
-        REPLICATED_APP: ${{ secrets.REPLICATED_APP }}
+        REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN_STAGING }}
+        REPLICATED_APP: wordpress-enterprise
         GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
         GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
+        REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
+        REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
 
