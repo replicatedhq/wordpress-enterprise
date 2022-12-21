@@ -7,7 +7,7 @@ spec:
     name: wordpress-enterprise
     chartVersion: 0.1.0
   helmVersion: v3
-  useHelmInstall: true
+  useHelmInstall: false
   values:
     isKurl: repl{{ IsKurl }}
     config: 
