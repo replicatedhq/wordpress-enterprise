@@ -3,7 +3,7 @@ name: Kubernetes Installer
 on:
   push:
     paths:
-    - 'kubernetes-installer.yaml'
+    - 'kurl-installer.yaml'
     - '.github/workflows/installer.yml'
 
 jobs:
