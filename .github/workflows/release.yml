@@ -3,10 +3,8 @@ name: App Release
 on:
   push:
     paths:
-    - '**'
-    - '!**.md'
-    - '!doc/**'
-    - '!**.png'
+    - 'manifests/**/*'
+    - '.github/workflows/release.yml'
 
 jobs:
   create-release:
