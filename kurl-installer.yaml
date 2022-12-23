@@ -1,7 +1,7 @@
 apiVersion: cluster.kurl.sh/v1beta1
 kind: Installer
 metadata:
-  name: ""
+  name: "installer"
 spec:
   containerd:
     version: 1.6.x
