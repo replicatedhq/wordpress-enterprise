@@ -6,4 +6,3 @@ spec:
   rules:
   - name: nonexistent-status-informer-object
     level: "off"
-  
