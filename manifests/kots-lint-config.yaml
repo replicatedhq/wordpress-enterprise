@@ -1,0 +1,9 @@
+apiVersion: kots.io/v1beta1
+kind: LintConfig
+metadata:
+  name: lint-config
+spec:
+  rules:
+  - name: nonexistent-status-informer-object
+    level: "off"
+  
