@@ -12,7 +12,7 @@ spec:
     disableS3: true
   kubernetes:
     version: 1.25.5
-  openEBS:
+  openebs:
     version: 3.3.x
     isLocalPVEnabled: true
     localPVStorageClassName: default
