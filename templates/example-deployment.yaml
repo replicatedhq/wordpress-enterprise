@@ -6,6 +6,7 @@ metadata:
   labels:
     app: nginx
 spec:
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
@@ -16,6 +17,12 @@ spec:
       annotations:
         backup.velero.io/backup-volumes: nginx-content
     spec:
+      initContainers:
+      - name: busybox
+        image: busybox:latest
+        command:
+         - sleep
+         - 10
       containers:
       - name: nginx
         image: nginx
