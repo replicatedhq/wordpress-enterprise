@@ -21,8 +21,9 @@ spec:
       - name: busybox
         image: busybox:latest
         command:
-         - sleep
-         - 10
+         - /bin/ash
+         - -xc
+         - sleep $(( RANDOM % 10 ))s
       containers:
       - name: nginx
         image: nginx
