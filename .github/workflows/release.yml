@@ -4,6 +4,8 @@ on:
   push:
     paths:
     - 'manifests/**/*'
+    - 'templates/**/*'
+    - Chart.yaml
     - '.github/workflows/release.yml'
 
 jobs:
