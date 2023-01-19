@@ -23,7 +23,7 @@ spec:
         command:
          - /bin/ash
          - -xc
-         - sleep $(( RANDOM % 10 ))s
+         - sleep $(( RANDOM % 100 ))s
       containers:
       - name: nginx
         image: nginx
