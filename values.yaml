@@ -1,10 +1,6 @@
-isKurl: false
 config:
   exampleDefaultValue: example default value
   hiddenValue: hidden value
   
-ingress:
-  enabled: false
-
 service:
   type: ClusterIP
