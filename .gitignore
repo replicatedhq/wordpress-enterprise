@@ -1,3 +1,6 @@
 .DS_Store
 .envrc
 manifests/*gz
+
+# https://stackoverflow.com/a/74884054/10055299
+charts/

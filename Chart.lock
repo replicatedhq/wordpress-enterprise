@@ -1,0 +1,6 @@
+dependencies:
+- name: kots-sdk
+  repository: oci://registry.staging.replicated.com/library
+  version: 0.0.1-alpha.5
+digest: sha256:edd95eef45bc8f6b5bcc7da902889504adf513393aaa9d27cacb0c74bf1dd45a
+generated: "2023-04-12T11:53:45.163519-05:00"

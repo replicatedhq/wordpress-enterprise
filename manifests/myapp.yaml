@@ -6,11 +6,3 @@ spec:
   chart:
     name: wordpress-enterprise
     chartVersion: 0.1.0
-  helmVersion: v3
-  useHelmInstall: false
-  values:
-    isKurl: repl{{ IsKurl }}
-    fake: yep
-    config: 
-      exampleDefaultValue: repl{{ ConfigOption "example_default_value" }}
-      hiddenValue: repl{{ ConfigOption "hidden_text" }}
