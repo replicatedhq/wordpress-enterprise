@@ -2,9 +2,9 @@ apiVersion: v2
 name: wordpress-enterprise
 description: A Helm chart for Kubernetes
 type: application
-version: 0.1.0
+version: 0.1.1
 appVersion: "1.16.0"
 dependencies:
   - name: kots-sdk
-    version: "0.0.1-alpha.5"
+    version: "0.0.1-alpha.6"
     repository: "oci://registry.staging.replicated.com/library"
