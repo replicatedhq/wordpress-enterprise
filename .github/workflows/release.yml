@@ -46,7 +46,7 @@ jobs:
       run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
 
     - name: Create a wordpress-express release - CLI release
-      run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
+      uses: docker://replicated/vendor-cli:latest
       with:
         args: release create --auto -y --yaml-dir=manifests2
       env:
