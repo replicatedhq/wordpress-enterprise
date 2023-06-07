@@ -1,3 +1,6 @@
 .DS_Store
 .envrc
 manifests/*gz
+analytics/notebooks/.ipynb_checkpoints
+analytics/notebooks/config.json
+
