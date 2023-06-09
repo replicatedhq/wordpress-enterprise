@@ -1,8 +1,7 @@
 name: App Release
 
 on:
-  push:
-    paths:
+  push: paths:
     - 'manifests/**/*'
     - 'templates/**/*'
     - Chart.yaml
@@ -21,6 +20,10 @@ jobs:
       id: get_branch
     - name: Helm Package / deps
       run: "helm dependency update && helm package . -d manifests"
+
+    - name: Create a wordpress-express release - stage directories
+      run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
+
     - name: Create a release on Channel associated with the branch
       uses: docker://replicated/vendor-cli:latest
       with:
@@ -42,7 +45,7 @@ jobs:
         REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
         REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
 
-    - name: (staging) Create a release on Channel associated with the branch
+    - name: (staging) Create a release on Channel associated with the branch - wordpress-express
       uses: docker://replicated/vendor-cli:latest
       with:
         args: release create --auto -y --yaml-dir=manifests2
@@ -53,9 +56,6 @@ jobs:
         GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
         REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
         REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
-
-    - name: Create a wordpress-express release - stage directories
-      run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
 
     - name: Create a wordpress-express release - CLI release
       uses: docker://replicated/vendor-cli:latest
