@@ -6,6 +6,9 @@ metadata:
   name: nginx
   labels:
     app: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service}}
+    app.kubernetes.io/name: {{ .Chart.Name }}
 spec:
   type: NodePort
   ports:
@@ -20,6 +23,9 @@ metadata:
   name: nginx
   labels:
     app: nginx
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service}}
+    app.kubernetes.io/name: {{ .Chart.Name }}
 spec:
   type: ClusterIP
   ports:
