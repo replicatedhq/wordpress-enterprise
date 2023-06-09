@@ -42,6 +42,18 @@ jobs:
         REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
         REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
 
+    - name: (staging) Create a release on Channel associated with the branch
+      uses: docker://replicated/vendor-cli:latest
+      with:
+        args: release create --auto -y --yaml-dir=manifests2
+      env:
+        REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN_STAGING }}
+        REPLICATED_APP: wordpress-express
+        GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
+        GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
+        REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
+        REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
+
     - name: Create a wordpress-express release - stage directories
       run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
 
