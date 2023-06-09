@@ -1,4 +1,8 @@
 isKurl: false
+
+replicated:
+  enabled: true
+
 config:
   exampleDefaultValue: example default value
   hiddenValue: hidden value
