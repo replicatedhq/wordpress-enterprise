@@ -10,6 +10,8 @@ spec:
   useHelmInstall: false
   values:
     isKurl: repl{{ IsKurl }}
+    replicated:
+      enabled: false
     fake: yep
     config: 
       exampleDefaultValue: repl{{ ConfigOption "example_default_value" }}
