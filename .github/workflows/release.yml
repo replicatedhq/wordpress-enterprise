@@ -35,7 +35,7 @@ jobs:
     - name: Package Helm Chart for Replicated
       id: package-helm-chart
       run: |
-        helm package relmatrix-app -u -d kots \
+        helm package . -u -d kots \
           --app-version=0.0.1-${{ github.ref_name }} \
           --version=${{ env.APP_VERSION }}
 
