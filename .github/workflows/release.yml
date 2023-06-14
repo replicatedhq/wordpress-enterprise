@@ -13,13 +13,6 @@ jobs:
   prepare-release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Get tag name, if specified
-      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo ::set-output name=tag::${GITHUB_REF:10}; fi
-      id: get_tag
-    - name: Get branch name
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      id: get_branch
     - name: Helm Package / deps
       run: "helm dependency update && helm package . -d manifests"
 
@@ -42,14 +35,22 @@ jobs:
             gql: ""
           - api: "https://api.staging.replicated.com/vendor"
             gql: "https://g.staging.replicated.com/graphql"
+
     steps:
+    - uses: actions/checkout@v1
+    - name: Get tag name, if specified
+      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo ::set-output name=tag::${GITHUB_REF:10}; fi
+      id: get_tag
+    - name: Get branch name
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: get_branch
     - name: prod/wordpress-enterprise - create release
       uses: docker://replicated/vendor-cli:latest
       with:
         args: release create --promote=Unstable --yaml-dir=${{ matrix.app.dir }}
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
-        REPLICATED_APP: ${{ matrix.app_slug }}
+        REPLICATED_APP: ${{ matrix.app.slug }}
         GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
         GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
         REPLICATED_API_ORIGIN: ${{ matrix.origin.api }}
