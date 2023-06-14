@@ -1,6 +1,7 @@
 name: App Release
 
 on:
+  branches: [main]
   push:
     paths:
     - 'manifests/**/*'
@@ -9,146 +10,46 @@ on:
     - '.github/workflows/release.yml'
 
 jobs:
-  create-release:
+  prepare-release:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Define App Version
-      run: echo "APP_VERSION=0.0.1-${GITHUB_REF_NAME//[^a-zA-Z0-9]/}.${GITHUB_SHA::7}" >> $GITHUB_ENV
-    - name: Define Channel Name
-      run: echo "CHANNEL_NAME=${{ github.ref_name }}-${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-    - name: Override Chanel to Unstable if main branch
-      run: echo "CHANNEL_NAME=Unstable" >> $GITHUB_ENV
-      if: github.branch == "main"
-
-    - name: Package Helm Chart for Replicated
-      id: package-helm-chart
-      run: |
-        helm package . -u -d manifests/ \
-          --app-version=${{ env.APP_VERSION }} \
-          --version=${{ env.APP_VERSION }}
-
-    - name: Update the HelmChart kind version
-      uses: jacobtomlinson/gha-find-replace@v3
-      with:
-        include: 'manifests/myapp.yaml'
-        find: '$VERSION'
-        replace: ${{ env.APP_VERSION }}
-        regex: false
+    - name: Get tag name, if specified
+      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo ::set-output name=tag::${GITHUB_REF:10}; fi
+      id: get_tag
+    - name: Get branch name
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: get_branch
+    - name: Helm Package / deps
+      run: "helm dependency update && helm package . -d manifests"
 
     - name: Create a wordpress-express release - stage directories
-      run: "mkdir manifests2/ && cp manifests/*.tgz manifests-chartonly/"
-
-    - name: Create Replicated Release
-      id: create-release-wpe-prod
-      uses: replicatedhq/compatibility-actions/create-release@v0
-      with:
-        app-slug: wordpress-enterprise
-        api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-        yaml-dir: ./manifests
-        promote-channel: ${{ env.CHANNEL_NAME }}
-        version: ${{ env.APP_VERSION }}
-
-    - name: Create Replicated Release
-      id: create-release-wpex-prod
-      uses: replicatedhq/compatibility-actions/create-release@v0
-      with:
-        app-slug: wordpress-express
-        api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-        yaml-dir: ./manifests-chartonly
-        promote-channel: ${{ env.CHANNEL_NAME }}
-        version: ${{ env.APP_VERSION }}
-
-
- compatibility-matrix-wordpress-express:
-    needs: push-to-replicated
-    strategy:
-      fail-fast: false
+      run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
+ 
+  create-release:
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    matrix:
       matrix:
-        cluster: [ {distribution: kind, version: v1.25.3}, {distribution: kind, version: v1.26.3}]
-
-    runs-on: ubuntu-22.04
+        app: 
+          - slug: "wordpress-enterprise"
+            dir: manifests
+          - slug: "wordpress-express"
+            dir: manifests2
+        origins:
+          - api: ""
+            gql: ""
+          - api: "https://api.staging.replicated.com/vendor"
+            gql: "https://g.staging.replicated.com/graphql"
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Define App Version
-        run: echo "APP_VERSION=0.0.1-${GITHUB_REF_NAME//[^a-zA-Z0-9]/}.${GITHUB_SHA::7}" >> $GITHUB_ENV
-
-      - name: Create Customer 
-        id: create-customer
-        uses: replicatedhq/compatibility-actions/create-customer@use-channel-slug
-        with:
-          app-slug: wordpress-express
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          customer-name: ${{ github.ref_name }}-${{ matrix.cluster.distribution }}-${{ matrix.cluster.version }}
-          channel-slug: ${{ needs.push-to-replicated.outputs.channel-slug }}
-          customer-email: ${{ github.ref_name }}@example.com
-
-      - name: Create Cluster
-        id: create-cluster
-        uses: replicatedhq/compatibility-actions/create-cluster@v0
-        timeout-minutes: 2
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          kubernetes-distribution: ${{ matrix.cluster.distribution }}
-          kubernetes-version: ${{ matrix.cluster.version }}
-          cluster-name: ${{ github.ref_name }}-${{ matrix.cluster.distribution }}-${{ matrix.cluster.version }}
-          ttl: 10m
-
-      - name: Deploy the app
-        uses: replicatedhq/compatibility-actions/helm-install@v0
-        with:
-          kubeconfig: ${{ steps.create-cluster.outputs.cluster-kubeconfig }}
-          helm-path: "helm"
-          registry-username: ${{ github.ref_name }}@example.com
-          registry-password: ${{ steps.create-customer.outputs.license-id }}
-          chart: oci://registry.replicated.com/${{ secrets.REPLICATED_APP }}/${{ needs.push-to-replicated.outputs.channel-slug }}/relmatrix-app
-          name: 'relmatrix-app'
-          version: ${{ env.APP_VERSION }}
-          namespace: 'default'
-          values: |
-            image:
-              tag: latest
-
-      - name: Run a test
-        # mask the kubeconfig so it doesn't show up in the logs
-        run: |
-          echo "Running a test"
-          echo "${{ steps.create-cluster.outputs.cluster-kubeconfig }}" > kubeconfig.yaml
-          sleep 60
-          kubectl port-forward svc/relmatrix-app --pod-running-timeout=2m --kubeconfig='./kubeconfig.yaml' 8080:80 &
-          sleep 120
-          curl -f http://localhost:8080
-          echo "Test complete"
-
-      - name: Remove Cluster
-        id: remove-cluster
-        uses: replicatedhq/compatibility-actions/remove-cluster@v0
-        continue-on-error: true # It could be that the cluster is already removed
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          cluster-id: ${{ steps.create-cluster.outputs.cluster-id }}
-
-      - name: Archive Customer
-        id: archive-customer
-        if: always()
-        uses: replicatedhq/compatibility-actions/archive-customer@use-channel-slug
-        with:
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          customer-id:  ${{ steps.create-customer.outputs.customer-id }}
-
-  cleanup-channel:
-    needs: 
-      - compatibility-matrix
-      - push-to-replicated
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Archive Replicated Channel
-        uses: replicatedhq/compatibility-actions/archive-channel@v0
-        with:
-          app-slug: ${{ secrets.REPLICATED_APP }}
-          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
-          channel-slug: ${{ needs.push-to-replicated.outputs.channel-slug }}        
+    - name: prod/wordpress-enterprise - create release
+      uses: docker://replicated/vendor-cli:latest
+      with:
+        args: release create --promote=Unstable --yaml-dir=${{ matrix.app.dir }}
+      env:
+        REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
+        REPLICATED_APP: ${{ matrix.app_slug }}
+        GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
+        GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
+        REPLICATED_API_ORIGIN: ${{ matrix.origin.api }}
+        REPLICATED_GRAPHQL_ORIGIN: ${{ matrix.origin.gql }}
