@@ -29,7 +29,8 @@ jobs:
   create-release:
     needs: prepare-release
     runs-on: ubuntu-latest
-    matrix:
+    strategy:
+      fail-fast: false
       matrix:
         app: 
           - slug: "wordpress-enterprise"
