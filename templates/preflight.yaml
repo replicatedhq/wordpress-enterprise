@@ -17,7 +17,7 @@ stringData:
             checkName: Node Count Check
             outcomes:
               - fail:
-                  when: 'count() < 3'
+                  when: 'count() < 10'
                   message: "The cluster has less than 3 nodes."
               - pass:
                   message: You have enough nodes

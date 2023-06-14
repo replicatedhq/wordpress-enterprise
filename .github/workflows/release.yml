@@ -10,6 +10,10 @@ on:
 
 jobs:
   create-release:
+    strategy:
+      fail-fast: false
+      matrix:
+        cluster: [ {distribution: kind, version: v1.25.3}, {distribution: k3s, version: v1.26}]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -71,3 +75,15 @@ jobs:
         REPLICATED_API_ORIGIN: https://api.staging.replicated.com/vendor
         REPLICATED_GRAPHQL_ORIGIN: https://g.staging.replicated.com/graphql
 
+    - name: Smoke Test
+      id: smoke-test
+      uses: replicatedhq/compatibility-actions/smoke-test@v0
+      with:
+          app-slug: wordpress-express
+          api-token: ${{ secrets.REPLICATED_API_TOKEN }}
+          yaml-dir: manifests2/
+          kubernetes-distribution: ${{ matrix.cluster.distribution }}
+          kubernetes-version: ${{ matrix.cluster.version }}
+          installation-method: helm
+          test-script: ./tests/test.sh
+          helm-chart-name: wordpress-enterprise
