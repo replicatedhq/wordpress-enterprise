@@ -28,9 +28,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Get tag name, if specified
-      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo GITHUB_TAG_NAME=${GITHUB_REF:10} >> $GITHUB_ENV
-      id: get_tag
     - name: Get branch name
       run: echo GITHUB_BRANCH_NAME=${GITHUB_REF#refs/heads/} >> $GITHUB_ENV
       id: get_branch
