@@ -16,9 +16,9 @@ jobs:
       matrix:
         app: 
           - slug: "wordpress-enterprise"
-            target: --yaml-dir=manifests
+            dir: manifests
           - slug: "wordpress-express"
-            target: --chart=manifests/*.tgz
+            dir: manifests2
         origins:
           - api: ""
             gql: ""
@@ -38,6 +38,9 @@ jobs:
           --app-version=0.0.1-${{ github.ref_name }} \
           --version=${{ env.APP_VERSION }}
 
+        mkdir manifests2
+        cp manifests/*.tgz manifests2/
+
 
     - name: Update the HelmChart kind
       uses: jacobtomlinson/gha-find-replace@v3
@@ -55,7 +58,7 @@ jobs:
     - name: Create Release
       uses: docker://replicated/vendor-cli:latest
       with:
-        args: release create --promote=Unstable --version=${{ env.APP_VERSION }} ${{ matrix.app.target }} 
+        args: release create --promote=Unstable --version=${{ env.APP_VERSION }} --yaml-dir=${{ matrix.app.dir }} 
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
         REPLICATED_APP: ${{ matrix.app.slug }}
