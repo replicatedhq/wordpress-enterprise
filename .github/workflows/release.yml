@@ -38,7 +38,7 @@ jobs:
           --app-version=0.0.1-${{ github.ref_name }} \
           --version=${{ env.APP_VERSION }}
 
-        mkdir manifests2
+        mkdir -p manifests2
         cp manifests/*.tgz manifests2/
 
 
