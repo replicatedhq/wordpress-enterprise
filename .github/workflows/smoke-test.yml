@@ -25,7 +25,7 @@ jobs:
       - name: Package Helm Chart for Replicated
         id: package-helm-chart
         run: |
-	  mkdir manifests2/
+          mkdir manifests2/
           helm package . -u -d manifests2/ \
             --app-version=0.3.0-${{ github.ref_name }} \
             --version=${{ env.APP_VERSION }}
