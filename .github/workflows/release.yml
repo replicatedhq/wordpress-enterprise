@@ -48,11 +48,6 @@ jobs:
         replace: ${{ env.APP_VERSION }}
         regex: false
 
-    - name: Helm Package / deps
-      run: "helm dependency update && helm package . -d manifests"
-    - name: Create a wordpress-express release - stage directories
-      run: "mkdir manifests2/ && cp manifests/*.tgz manifests2/"
-
     - name: Create Release
       uses: docker://replicated/vendor-cli:latest
       with:
