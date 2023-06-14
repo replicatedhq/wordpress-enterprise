@@ -34,12 +34,10 @@ jobs:
     - name: Package Helm Chart for Replicated
       id: package-helm-chart
       run: |
-        helm package . -u -d manifests \
+        mkdir -p ${{ matrix.app.dir }}
+        helm package . -u -d ${{ matrix.app.dir }} \
           --app-version=0.0.1-${{ github.ref_name }} \
           --version=${{ env.APP_VERSION }}
-
-        mkdir -p manifests2
-        cp manifests/*.tgz manifests2/
 
 
     - name: Update the HelmChart kind
