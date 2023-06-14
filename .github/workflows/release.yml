@@ -1,5 +1,4 @@
 name: App Release
-
 on:
   push:
     branches: [main]
@@ -17,9 +16,9 @@ jobs:
       matrix:
         app: 
           - slug: "wordpress-enterprise"
-            dir: manifests
+            target: --yaml-dir=manifests
           - slug: "wordpress-express"
-            dir: manifests2
+            target: --chart=manifests/*.tgz
         origins:
           - api: ""
             gql: ""
@@ -35,9 +34,10 @@ jobs:
     - name: Package Helm Chart for Replicated
       id: package-helm-chart
       run: |
-        helm package . -u -d kots \
+        helm package . -u -d manifests \
           --app-version=0.0.1-${{ github.ref_name }} \
           --version=${{ env.APP_VERSION }}
+
 
     - name: Update the HelmChart kind
       uses: jacobtomlinson/gha-find-replace@v3
@@ -55,7 +55,7 @@ jobs:
     - name: Create Release
       uses: docker://replicated/vendor-cli:latest
       with:
-        args: release create --promote=Unstable --version=${{ env.APP_VERSION }} --yaml-dir=${{ matrix.app.dir }} 
+        args: release create --promote=Unstable --version=${{ env.APP_VERSION }} ${{ matrix.app.target }} 
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
         REPLICATED_APP: ${{ matrix.app.slug }}
