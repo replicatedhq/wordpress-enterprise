@@ -29,10 +29,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Get tag name, if specified
-      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo ::set-output name=tag::${GITHUB_REF:10}; fi
+      run: if grep -q "/tags/" <<< "${GITHUB_REF}"; then echo GITHUB_TAG_NAME=${GITHUB_REF:10} >> $GITHUB_ENV
       id: get_tag
     - name: Get branch name
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      run: echo GITHUB_BRANCH_NAME=${GITHUB_REF#refs/heads/} >> $GITHUB_ENV
       id: get_branch
     - name: Helm Package / deps
       run: "helm dependency update && helm package . -d manifests"
@@ -46,7 +46,5 @@ jobs:
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
         REPLICATED_APP: ${{ matrix.app.slug }}
-        GITHUB_BRANCH_NAME: ${{ steps.get_branch.outputs.branch }}
-        GITHUB_TAG_NAME: ${{ steps.get_tag.outputs.tag }}
         REPLICATED_API_ORIGIN: ${{ matrix.origin.api }}
         REPLICATED_GRAPHQL_ORIGIN: ${{ matrix.origin.gql }}
