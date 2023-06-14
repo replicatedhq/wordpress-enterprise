@@ -5,7 +5,7 @@ metadata:
 spec:
   chart:
     name: wordpress-enterprise
-    chartVersion: 0.3.0
+    chartVersion: $VERSION
   helmVersion: v3
   useHelmInstall: false
   values:
