@@ -25,13 +25,11 @@ jobs:
       - name: Package Helm Chart for Replicated
         id: package-helm-chart
         run: |
-          helm package relmatrix-app -u -d manifests \
+	  mkdir manifests2/
+          helm package . -u -d manifests2/ \
             --app-version=0.3.0-${{ github.ref_name }} \
             --version=${{ env.APP_VERSION }}
 
-          helm package relmatrix-app -u -d manifests2 \
-            --app-version=0.3.0-${{ github.ref_name }} \
-            --version=${{ env.APP_VERSION }}
 
       - name: Update the HelmChart kind
         uses: jacobtomlinson/gha-find-replace@v3
@@ -52,7 +50,7 @@ jobs:
           kubernetes-version: ${{ matrix.cluster.version }}
           installation-method: helm
           test-script: ./tests/test.sh
-          helm-chart-name: relmatrix-app
+          helm-chart-name: wordpress-express
           helm-values: |
             image:
               tag: latest
