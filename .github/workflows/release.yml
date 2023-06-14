@@ -55,7 +55,7 @@ jobs:
     - name: Create Release
       uses: docker://replicated/vendor-cli:latest
       with:
-        args: release create --promote=${{ env.APP_VERSION }} --version=${{ env.APP_VERSION }} --yaml-dir=${{ matrix.app.dir }}
+        args: release create --promote=Unstable --version=${{ env.APP_VERSION }} --yaml-dir=${{ matrix.app.dir }} 
       env:
         REPLICATED_API_TOKEN: ${{ secrets.REPLICATED_API_TOKEN }}
         REPLICATED_APP: ${{ matrix.app.slug }}
