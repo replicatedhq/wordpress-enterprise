@@ -32,7 +32,7 @@ jobs:
 
       - name: Smoke Test
         id: smoke-test
-        uses: replicatedhq/compatibility-actions/smoke-test@v0
+        uses: replicatedhq/compatibility-actions/smoke-test@dexhorthy-patch-1
         with:
           app-slug: wordpress-express
           api-token: ${{ secrets.REPLICATED_API_TOKEN }}
