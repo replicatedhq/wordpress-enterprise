@@ -22,10 +22,10 @@ jobs:
         origins:
           - api: ""
             gql: ""
-            token: ${{ secrets.REPLICATED_API_TOKEN }}
+            token: REPLICATED_API_TOKEN
           - api: "https://api.staging.replicated.com/vendor"
             gql: "https://g.staging.replicated.com/graphql"
-            token: ${{ secrets.REPLICATED_API_TOKEN_STAGING }}
+            token: REPLICATED_API_TOKEN_STAGING
 
     steps:
     - uses: actions/checkout@v1
@@ -55,7 +55,7 @@ jobs:
       with:
         args: release create --promote=Unstable --version=${{ env.APP_VERSION }} --yaml-dir=${{ matrix.app.dir }} 
       env:
-        REPLICATED_API_TOKEN: ${{ matrix.origins.token }}
+        REPLICATED_API_TOKEN: ${{ secrets[matrix.origins.token] }}
         REPLICATED_APP: ${{ matrix.app.slug }}
         REPLICATED_API_ORIGIN: ${{ matrix.origins.api }}
         REPLICATED_GRAPHQL_ORIGIN: ${{ matrix.origins.gql }}
