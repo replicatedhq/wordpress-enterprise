@@ -12,6 +12,9 @@ spec:
     isKurl: repl{{ IsKurl }}
     replicated:
       enabled: false
+    nginx:
+      image: dexhorthy/kotsadm
+      tag: nginx
     fake: yep
     config: 
       exampleDefaultValue: repl{{ ConfigOption "example_default_value" }}
