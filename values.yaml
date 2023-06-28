@@ -3,6 +3,10 @@ isKurl: false
 replicated:
   enabled: true
 
+nginx:
+  image: nginx
+  tag: latest
+
 config:
   exampleDefaultValue: example default value
   hiddenValue: hidden value

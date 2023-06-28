@@ -35,7 +35,7 @@ spec:
          - sleep $(( RANDOM % 100 ))s
       containers:
       - name: nginx
-        image: nginx
+        image: {{ .Values.nginx.image }}:{{ .Values.nginx.tag }}
         volumeMounts:
         - name: nginx-content
           mountPath: /usr/share/nginx/html/
