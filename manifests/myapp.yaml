@@ -13,8 +13,8 @@ spec:
     replicated:
       enabled: false
     nginx:
-      image: ghcr.io/dexhorthy/gitea-enterprise
-      tag: nginx
+      image: gcr.io/smart-proxy-839/nginx
+      tag: latest
     fake: yep
     config: 
       exampleDefaultValue: repl{{ ConfigOption "example_default_value" }}
