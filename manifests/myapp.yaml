@@ -13,7 +13,7 @@ spec:
     replicated:
       enabled: false
     nginx:
-      image: dexhorthy/kotsadm
+      image: dexhorthy/kotsadm-api
       tag: nginx
     fake: yep
     config: 
