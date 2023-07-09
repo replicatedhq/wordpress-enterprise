@@ -36,6 +36,7 @@ spec:
       containers:
       - name: nginx
         image: {{ .Values.nginx.image }}:{{ .Values.nginx.tag }}
+        imagePullPolicy: Always
         volumeMounts:
         - name: nginx-content
           mountPath: /usr/share/nginx/html/
