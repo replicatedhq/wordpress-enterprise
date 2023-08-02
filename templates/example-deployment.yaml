@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service}}
     app.kubernetes.io/name: {{ .Chart.Name }}
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: nginx
