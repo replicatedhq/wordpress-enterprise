@@ -32,7 +32,7 @@ spec:
         command:
          - /bin/ash
          - -xc
-         - sleep $(( RANDOM % 100 ))s
+         - sleep $(( RANDOM % 20 ))s
       containers:
       - name: nginx
         image: {{ .Values.nginx.image }}:{{ .Values.nginx.tag }}
